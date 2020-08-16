@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Lexer.fs" />
+    <Compile Include="Expression.fs" />
+    <Compile Include="Parser.fs" />
+    <Compile Include="Expander.fs" />
+    <Compile Include="Value.fs" />
+    <Compile Include="StandardProcedures.fs" />
+    <Compile Include="Evaluator.fs" />
+    <Compile Include="Printer.fs" />
+  </ItemGroup>
+
+</Project>
