@@ -8,11 +8,17 @@
     <Compile Include="Lexer.fs" />
     <Compile Include="Expression.fs" />
     <Compile Include="Parser.fs" />
-    <Compile Include="Expander.fs" />
     <Compile Include="Value.fs" />
     <Compile Include="StandardProcedures.fs" />
     <Compile Include="Evaluator.fs" />
     <Compile Include="Printer.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

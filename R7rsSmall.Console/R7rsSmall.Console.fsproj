@@ -10,6 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\R7rsSmall\R7rsSmall.fsproj" />
     <ProjectReference Include="..\R7RS\R7rsSmall.fsproj" />
   </ItemGroup>
