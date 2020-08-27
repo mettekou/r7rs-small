@@ -38,3 +38,13 @@ module StandardProcedures =
 
   let plus values =
     List.fold (fun soFar next -> Result.bind (fun first -> plus' first next) soFar) (Ok(ExactNumber(0M, 1M))) values
+
+  let car values =
+    match values with
+    | [ List (head :: _) ] -> Ok head
+    | _ -> Error()
+
+  let cdr values =
+    match values with
+    | [ List (_ :: tail) ] -> Ok (List tail)
+    | _ -> Error()

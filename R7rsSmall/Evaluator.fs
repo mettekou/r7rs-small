@@ -8,7 +8,9 @@ module Evaluator =
 
   let globalEnvironment =
     Map.ofList [ "eqv?", StandardProcedure(StandardProcedures.``eqv?``)
-                 "+", StandardProcedure(StandardProcedures.plus) ]
+                 "+", StandardProcedure(StandardProcedures.plus)
+                 "car", StandardProcedure(StandardProcedures.car)
+                 "cdr", StandardProcedure(StandardProcedures.cdr)]
 
   let hexToChar hexChars =
     let hexString = String.Concat<char> hexChars
