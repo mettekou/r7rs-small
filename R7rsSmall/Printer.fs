@@ -11,6 +11,7 @@ module Printer =
     | InexactNumber value -> string value
     | ExactNumber (numerator, denominator) -> string numerator + "/" + string denominator
     | String string -> "\"" + string + "\""
+    | Symbol symbol -> "'" + symbol
     | Procedure _ -> "#<procedure>"
     | List values ->
         "'("
