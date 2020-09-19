@@ -98,59 +98,70 @@ module Evaluator =
                      | Ok value -> Ok(value, environment''')
                      | Error _ -> Error(expression, environment))
             | Ok _ -> Error(expression, environment)
-         | [] -> Error(expression, environment)
+        | [] -> Error(expression, environment)
+    | Expression.Pair _ -> Error(expression, environment)
     | Abbreviation (Quote, Expression.List expressions) ->
         evaluateSequence expressions environment
-        |> Result.map (fun (values, environment) -> List values, environment)
+        |> Result.map (fun (values, environment) -> Value.list values, environment)
     | Expression.Vector expressions ->
         evaluateSequence expressions environment
         |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
     | Abbreviation (Quote, expression) -> evaluateQuote expression environment
     | Abbreviation (Quasiquote, expression) -> evaluateQuasiquote expression environment
-    | Abbreviation (Unquote, unquoted) -> Error (Abbreviation (Unquote, unquoted), environment)
-    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error (Abbreviation (Unquote, unquoteSpliced), environment)
+    | Abbreviation (Unquote, unquoted) -> Error(Abbreviation(Unquote, unquoted), environment)
+    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error(Abbreviation(Unquote, unquoteSpliced), environment)
 
   and evaluateQuote expression environment =
     match expression with
-    | Expression.Boolean value -> Ok (Value.Boolean value, environment)
-    | Expression.InexactNumber value -> Ok (InexactNumber value, environment)
-    | Expression.ExactNumber (numerator, denominator) -> Ok (ExactNumber (numerator, denominator), environment)
-    | Expression.Character value -> Ok (Character value, environment)
-    | Expression.Symbol value -> Ok (Symbol value, environment)
+    | Expression.Boolean value -> Ok(Value.Boolean value, environment)
+    | Expression.InexactNumber value -> Ok(InexactNumber value, environment)
+    | Expression.ExactNumber (numerator, denominator) -> Ok(ExactNumber(numerator, denominator), environment)
+    | Expression.Character value -> Ok(Character value, environment)
+    | Expression.Symbol value -> Ok(Symbol value, environment)
     | Expression.List expressions ->
-        List.fold
-          (fun result expression' ->
-            Result.bind
-              (fun (values : Value list, environment') ->
-                evaluateQuote expression' environment'
-                |> Result.map (fun (value, environment'') -> value :: values, environment'')) result) (Ok([], environment)) expressions
-        |> Result.map (fun (values, _) -> List (List.rev values), environment)
-    | Expression.Vector expressions -> evaluateSequence expressions environment |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
+        List.fold (fun result expression' ->
+          Result.bind (fun (values: Value list, environment') ->
+            evaluateQuote expression' environment'
+            |> Result.map (fun (value, environment'') -> value :: values, environment'')) result) (Ok([], environment))
+          expressions
+        |> Result.map (fun (values, _) -> Value.list (List.rev values), environment)
+    | Expression.Pair (car, cdr) ->
+        Result.bind (fun (car', _) ->
+          Result.bind (fun (cdr', _) -> Ok(Pair(car', cdr'), environment)) (evaluateQuote cdr environment))
+          (evaluateQuote car environment)
+    | Expression.Vector expressions ->
+        evaluateSequence expressions environment
+        |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
     | Abbreviation (Quote, quoted) -> evaluateQuote quoted environment
     | Abbreviation (Quasiquote, quasiquoted) -> evaluateQuasiquote quasiquoted environment
-    | Abbreviation (Unquote, unquoted) -> Error (Abbreviation (Unquote, unquoted), environment)
-    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error (Abbreviation (UnquoteSplice, unquoteSpliced), environment)
+    | Abbreviation (Unquote, unquoted) -> Error(Abbreviation(Unquote, unquoted), environment)
+    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error(Abbreviation(UnquoteSplice, unquoteSpliced), environment)
 
   and evaluateQuasiquote expression environment =
     match expression with
-    | Expression.Boolean value -> Ok (Value.Boolean value, environment)
-    | Expression.InexactNumber value -> Ok (InexactNumber value, environment)
-    | Expression.ExactNumber (numerator, denominator) -> Ok (ExactNumber (numerator, denominator), environment)
-    | Expression.Character value -> Ok (Character value, environment)
-    | Expression.Symbol value -> Ok (Symbol value, environment)
+    | Expression.Boolean value -> Ok(Value.Boolean value, environment)
+    | Expression.InexactNumber value -> Ok(InexactNumber value, environment)
+    | Expression.ExactNumber (numerator, denominator) -> Ok(ExactNumber(numerator, denominator), environment)
+    | Expression.Character value -> Ok(Character value, environment)
+    | Expression.Symbol value -> Ok(Symbol value, environment)
     | Expression.List expressions ->
-        List.fold
-          (fun result expression' ->
-            Result.bind
-              (fun (values : Value list, environment') ->
-                evaluateQuasiquote expression' environment'
-                |> Result.map (fun (value, environment'') -> value :: values, environment'')) result) (Ok([], environment)) expressions
-        |> Result.map (fun (values, _) -> List (List.rev values), environment)
-    | Expression.Vector expressions -> evaluateSequence expressions environment |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
+        List.fold (fun result expression' ->
+          Result.bind (fun (values: Value list, environment') ->
+            evaluateQuasiquote expression' environment'
+            |> Result.map (fun (value, environment'') -> value :: values, environment'')) result) (Ok([], environment))
+          expressions
+        |> Result.map (fun (values, _) -> Value.list (List.rev values), environment)
+    | Expression.Pair (car, cdr) ->
+        Result.bind (fun (car', _) ->
+          Result.bind (fun (cdr', _) -> Ok(Pair(car', cdr'), environment)) (evaluateQuasiquote cdr environment))
+          (evaluateQuasiquote car environment)
+    | Expression.Vector expressions ->
+        evaluateSequence expressions environment
+        |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
     | Abbreviation (Quote, quoted) -> evaluateQuasiquote quoted environment
     | Abbreviation (Quasiquote, quasiquoted) -> evaluateQuasiquote quasiquoted environment
     | Abbreviation (Unquote, unquoted) -> evaluate unquoted environment
-    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error (Abbreviation (UnquoteSplice, unquoteSpliced), environment)
+    | Abbreviation (UnquoteSplice, unquoteSpliced) -> Error(Abbreviation(UnquoteSplice, unquoteSpliced), environment)
 
   and evaluateSequence expressions environment =
     List.fold (fun result expression ->

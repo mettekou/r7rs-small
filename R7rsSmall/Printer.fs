@@ -13,10 +13,12 @@ module Printer =
     | String string -> "\"" + string + "\""
     | Symbol symbol -> "'" + symbol
     | Procedure _ -> "#<procedure>"
-    | List values ->
+    | Value.List values ->
         "'("
         + (List.map print values |> String.concat " ")
         + ")"
+    | Pair (car, cdr) -> "'(" + print car + " . " + print cdr + ")"
+    | Nil -> "'()"
     | Vector values ->
         "#("
         + (Array.map print values |> String.concat " ")

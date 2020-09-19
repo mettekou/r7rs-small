@@ -9,6 +9,13 @@ type ParserState =
 
 module Parser =
 
+  let list expressions =
+    match expressions with
+    | [] -> Nil
+    | cdr :: Symbol "." :: car :: expressions' ->
+        List.fold (fun soFar next -> Pair(next, soFar)) (Pair(car, cdr)) expressions'
+    | _ :: _ -> List.fold (fun soFar next -> Pair(next, soFar)) Nil expressions
+
   let rec shift stack expression =
     match stack with
     | [] -> Ok [ Ready expression ]
@@ -38,7 +45,7 @@ module Parser =
     match stack with
     | [] -> Error stack
     | Ready _ :: _ -> Error stack
-    | InList expressions :: stack' -> List.rev expressions |> List |> shift stack'
+    | InList expressions :: stack' -> list expressions |> shift stack'
     | InVector expressions :: stack' -> List.rev expressions |> Vector |> shift stack'
     | InByteVector expressions :: stack' -> List.rev expressions |> ByteVector |> shift stack'
     | InAbbreviation _ :: _ -> Error stack

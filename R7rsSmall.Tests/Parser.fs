@@ -15,15 +15,7 @@ module Parser =
         ClosingParenthesis ]
 
     testCase "Parser correctly parses improper list"
-    <| fun _ ->
-      Expect.equal
-        (Parser.parse lexemes)
-        (Ok
-          (List [ Symbol "x"
-                  Symbol "y"
-                  Symbol "."
-                  Symbol "z" ]))
-        ""
+    <| fun _ -> Expect.equal (Parser.parse lexemes) (Ok(Pair(Symbol "x", Pair(Symbol "y", Symbol "z")))) ""
 
   let parseQuotedListTest =
     let lexemes =
@@ -41,9 +33,9 @@ module Parser =
         (Ok
           (Abbreviation
             (Quote,
-             List [ Symbol "x"
-                    Symbol "y"
-                    Symbol "z" ])))
+             Expression.list [ Symbol "x"
+                               Symbol "y"
+                               Symbol "z" ])))
         ""
 
   let parseNumericalDerivativeDefinitionTest =
@@ -82,19 +74,20 @@ module Parser =
       Expect.equal
         (Parser.parse lexemes)
         (Ok
-          (List [ Symbol "define"
-                  List [ Symbol "diff"
-                         Symbol "h"
-                         Symbol "f"
-                         Symbol "x" ]
-                  List [ Symbol "/"
-                         List [ Symbol "-"
-                                List [ Symbol "f"
-                                       List [ Symbol "+"
-                                              Symbol "x"
-                                              Symbol "h" ] ]
-                                List [ Symbol "f"; Symbol "x" ] ]
-                         Symbol "h" ] ]))
+          (Expression.list [ (Symbol "define")
+                             Expression.list [ Symbol "diff"
+                                               Symbol "h"
+                                               Symbol "f"
+                                               Symbol "x" ]
+                             Expression.list [ Symbol "/"
+                                               Expression.list [ Symbol "-"
+                                                                 Expression.list [ Symbol "f"
+                                                                                   Expression.list [ Symbol "+"
+                                                                                                     Symbol "x"
+                                                                                                     Symbol "h" ] ]
+                                                                 Expression.list [ Symbol "f"
+                                                                                   Symbol "x" ] ]
+                                               Symbol "h" ] ]))
         ""
 
   [<Tests>]

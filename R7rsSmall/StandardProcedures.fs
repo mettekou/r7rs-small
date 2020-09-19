@@ -39,12 +39,14 @@ module StandardProcedures =
   let plus values =
     List.fold (fun soFar next -> Result.bind (fun first -> plus' first next) soFar) (Ok(ExactNumber(0M, 1M))) values
 
+  let list values = Ok(Value.list values)
+
   let car values =
     match values with
-    | [ List (head :: _) ] -> Ok head
+    | [ Value.List (head :: _) ] -> Ok head
     | _ -> Error()
 
   let cdr values =
     match values with
-    | [ List (_ :: tail) ] -> Ok (List tail)
+    | [ Value.List (_ :: tail) ] -> Ok(Value.list tail)
     | _ -> Error()

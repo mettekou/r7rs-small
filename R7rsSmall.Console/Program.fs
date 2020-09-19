@@ -14,7 +14,7 @@ let rec repl environment =
       | Error error ->
           printfn "Syntactic error: %A" error
           repl environment
-      | Ok (List [ Symbol "exit" ]) -> 0
+      | Ok (Expression.List [ Symbol "exit" ]) -> 0
       | Ok expression ->
           match Evaluator.evaluate expression environment with
           | Error error ->
