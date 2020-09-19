@@ -1,5 +1,7 @@
 ﻿namespace R7rsSmall
 
+open System.Runtime.InteropServices
+
 module StandardProcedures =
 
   let ``eqv?`` values =
@@ -49,4 +51,26 @@ module StandardProcedures =
   let cdr values =
     match values with
     | [ Value.List (_ :: tail) ] -> Ok(Value.list tail)
+    | _ -> Error()
+
+  let features values =
+    match values with
+    | [] ->
+        let os =
+          if RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+          then [ Symbol "windows" ]
+          else if RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+          then [ Symbol "posix"; Symbol "linux" ]
+          else if RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+          then [ Symbol "posix"; Symbol "freebsd" ]
+          else if RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+          then [ Symbol "posix"; Symbol "darwin" ]
+          else []
+
+        Ok
+          (Value.list
+            ([ Symbol "r7rs"
+               Symbol "ieee-float"
+               Symbol "clr" ]
+             @ os))
     | _ -> Error()

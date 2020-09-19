@@ -11,12 +11,14 @@ module Evaluator =
                  "+", StandardProcedure(StandardProcedures.plus)
                  "list", StandardProcedure(StandardProcedures.list)
                  "car", StandardProcedure(StandardProcedures.car)
-                 "cdr", StandardProcedure(StandardProcedures.cdr)]
+                 "cdr", StandardProcedure(StandardProcedures.cdr)
+                 "features", StandardProcedure(StandardProcedures.features) ]
 
   let hexToChar hexChars =
     let hexString = String.Concat<char> hexChars
     let length = String.length hexString
     let bytes = Array.zeroCreate<byte> (length / 2)
+
     for index in 0 .. 2 .. length - 1 do
       bytes.[index / 2] <- Convert.ToByte(hexString.Substring(index, 2), 16)
     (Encoding.UTF8.GetChars bytes).[0]
