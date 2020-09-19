@@ -9,6 +9,7 @@ module Evaluator =
   let globalEnvironment =
     Map.ofList [ "eqv?", StandardProcedure(StandardProcedures.``eqv?``)
                  "+", StandardProcedure(StandardProcedures.plus)
+                 "list", StandardProcedure(StandardProcedures.list)
                  "car", StandardProcedure(StandardProcedures.car)
                  "cdr", StandardProcedure(StandardProcedures.cdr)]
 
