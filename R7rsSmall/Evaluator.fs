@@ -103,9 +103,6 @@ module Evaluator =
             | Ok _ -> Error(expression, environment)
         | [] -> Error(expression, environment)
     | Expression.Pair _ -> Error(expression, environment)
-    | Abbreviation (Quote, Expression.List expressions) ->
-        evaluateSequence expressions environment
-        |> Result.map (fun (values, environment) -> Value.list values, environment)
     | Expression.Vector expressions ->
         evaluateSequence expressions environment
         |> Result.map (fun (values, environment) -> values |> List.toArray |> Vector, environment)
